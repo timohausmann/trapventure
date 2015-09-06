@@ -6,6 +6,7 @@ Tile = function(x, y, type) {
 	this.hasChanged = false; //editor
 	this.isTarget = false; //debug
 	this.isWalkable = false;
+	this.animStep = 0.2;
 
 	this.img = new Image();
 	this.img.src = 'assets/images/sprite.png';
@@ -42,6 +43,7 @@ Tile.prototype = {
 		if( this.type < 2 || this.type > 3 ) return;
 		this.type = this.type === 2 ? 3 : 2;
 		this.isWalkable = !this.isWalkable;
+		this.animStep = 0;
 	},
 
 	getNeighbours: function() {
@@ -68,13 +70,20 @@ Tile.prototype = {
 		return neighbours;
 	},
 
-	update: function() {},
+	update: function( delta ) {
 
+		if( '23'.indexOf(this.type) !== -1 ) {
+			this.animStep += delta;
+
+			if( this.animStep > 0.2 ) this.animStep = 0.2;
+		}
+	},
 
 	draw: function(ctx) {
 
 		var x = this.x/tilesize,
-			y = this.y/tilesize;
+			y = this.y/tilesize,
+			step = (this.animStep/0.2)*20;
 
 		if( '1235'.indexOf(this.type) !== -1 ) {
 
@@ -92,15 +101,18 @@ Tile.prototype = {
 		if( this.type === 2 ) {
 
 			ctx.fillStyle = '#89ccca';
-			ctx.fillRect(this.x, this.y - 20, tilesize, tilesize);
+			ctx.fillRect(this.x, this.y - step, tilesize, tilesize);
 
 			ctx.fillStyle = '#679997';
-			ctx.fillRect(this.x, this.y+20, tilesize, 20);
+			ctx.fillRect(this.x, this.y+40-step, tilesize, step);
 
 		} else if( this.type === 3 ) {
 
-			ctx.fillStyle = '#541e1e';
-			ctx.fillRect(this.x, this.y, tilesize, tilesize);	
+			ctx.fillStyle = '#333';
+			ctx.fillRect(this.x, this.y - (20-step), tilesize, tilesize);	
+
+			ctx.fillStyle = '#222';
+			ctx.fillRect(this.x, this.y+40-(20-step), tilesize, (20-step));
 
 		} else if( this.type === 5 ) {
 

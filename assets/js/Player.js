@@ -87,9 +87,7 @@ Player.prototype = {
 		//exit check
 		if( getTileAt(x,y).type === 5 ) {
 
-			aa.play('exit');
-			maps.shift();
-			loadMap();
+			endReached = true;
 		}
 	},
 

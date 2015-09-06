@@ -48,7 +48,8 @@ var game = game || {};
 		enemies = [],
 		tiles = [],
 		world = [],
-		animFrame;
+		animFrame,
+		endReached = false;
 
 
 	game.init = function() {
@@ -186,9 +187,17 @@ var game = game || {};
 
 	function loop() {
 
-		var 	thisUpdate = new Date(),
-                delta = (thisUpdate - lastUpdate) / 1000,
-                amount = world.length;
+		//ugly fix
+		if( endReached ) {
+			aa.play('exit');
+			maps.shift();
+			loadMap();
+			endReached = false;
+		}
+
+		var thisUpdate = new Date(),
+			delta = (thisUpdate - lastUpdate) / 1000,
+			amount = world.length;
 
 		ctx.clearRect(0,0,canvas.width, canvas.height);
         var offx = map[0].length*tilesize/2,

@@ -7,6 +7,18 @@ var game = game || {};
 		aa = new ArcadeAudio(),
 		player,
 		tilesize = 40,
+		names = [
+			'dusty stairways',
+			'how to kill an undead',
+			'mirror cave',
+			'the large hall',
+			'outer circle',
+			'thank god there are no snakes here',
+			'persian room',
+			'the only way',
+			'broken pillars',
+			'test of will',
+		],
 		maps = [
 			[
 				[4,1,1,2,1,1,3,1,1,5]
@@ -17,30 +29,40 @@ var game = game || {};
 			[
 				[0,6,3,1,1,1,1,1,3,6,0],
 				[0,0,0,1,0,0,0,1,0,0,0],
-				[4,1,2,1,0,0,0,1,1,1,5],
+				[4,1,2,1,0,0,0,1,1,1,5]
 			],
-			[
+			/*[
 				[0,0,0,1,1,6,1,1,0,0,0],
 				[0,0,0,3,0,0,0,2,0,0,0],
 				[0,0,0,6,0,0,0,6,0,0,0],
 				[0,0,0,1,0,0,0,1,0,0,0],
 				[4,1,1,2,2,3,2,2,1,1,5]
-			],
+			],*/
 			[
-				[0,0,6,0,6,0,6,0,0],
-				[0,0,3,0,1,0,3,0,0],
-				[4,1,1,2,1,1,1,1,5],
-				[0,0,3,0,1,0,3,0,0],
-				[0,0,6,0,6,0,6,0,0]
-			],
-			[
+				[0,0,1,1,1,1,6,0,0],
 				[0,0,1,1,1,1,1,0,0],
-				[0,0,1,0,0,0,1,0,0],
-				[4,1,2,0,0,0,6,1,5],
-				[0,0,1,0,0,0,1,0,0],
+				[4,1,1,1,3,1,1,1,5],
+				[0,0,1,1,1,1,6,0,0],
 				[0,0,1,1,1,1,1,0,0]
 			],
 			[
+				[4,1,0,3,3,3,3,3],
+				[0,2,0,3,2,6,2,3],
+				[6,1,0,3,2,2,2,3],
+				[3,0,0,3,2,5,2,3],
+				[1,2,6,3,2,2,2,3],
+				[0,0,0,3,3,3,3,3]
+			],
+			/*[
+				[1,1,1,1,3,3,6,6,1,1],
+				[1,1,1,1,2,2,1,6,1,1],
+				[1,1,1,1,2,3,1,6,1,1],
+				[4,1,1,1,3,3,1,1,1,5],
+				[1,1,1,1,2,3,1,6,1,1],
+				[1,1,1,1,2,2,1,6,1,1],
+				[1,1,1,1,3,3,6,6,1,1]
+			],*/
+			/*[
 				[0,0,0,6,0,0,0,0,0,0,0,0,0],
 				[0,0,0,2,1,1,1,3,6,6,0,0,0],
 				[0,0,0,1,0,0,0,1,0,0,0,0,0],
@@ -48,6 +70,46 @@ var game = game || {};
 				[0,0,0,3,0,0,0,0,0,0,0,0,0],
 				[0,0,0,3,0,0,0,0,0,0,0,0,0],
 				[6,1,4,1,2,2,2,6,6,6,0,0,0]
+			],*/
+			[
+				[6,0,1,6,1,0,1,6,1,0],
+				[1,0,1,0,1,0,1,0,1,0],
+				[1,0,2,0,2,0,3,0,1,5],
+				[1,0,1,0,1,0,1,0,0,0],
+				[1,4,1,0,1,6,1,0,0,0]
+			],
+			[
+				[0,1,3,1,2,6,2,1,3,6,0],
+				[1,3,1,2,1,3,1,2,1,3,1],
+				[4,2,3,1,2,6,2,1,3,2,5],
+				[1,3,1,2,1,3,1,2,1,3,1],
+				[0,1,3,1,2,6,2,1,3,6,0]
+			],
+			[
+				[4,1,1,1,1,1,1,6],
+				[0,0,0,0,3,0,0,0],
+				[0,0,0,0,1,0,0,0],
+				[0,0,0,0,6,0,0,0],
+				[0,0,0,0,2,0,0,0],
+				[0,0,0,0,1,1,1,5]
+			],
+			[
+				[0,0,0,0,4,0,0,0,0],
+				[0,0,1,2,1,3,1,0,0],
+				[0,0,6,0,1,0,1,0,0],
+				[6,0,1,0,1,0,6,0,1],
+				[1,1,1,1,5,1,1,1,1],
+				[1,0,6,0,1,0,1,0,6],
+				[0,0,1,3,1,2,6,0,0]
+			],
+			[
+				[0,6,1,0,6,0,1,6,0],
+				[0,0,1,1,1,1,1,0,0],
+				[0,0,1,1,1,1,1,0,0],
+				[4,1,1,1,3,1,1,1,6],
+				[0,0,1,1,1,1,6,0,0],
+				[0,0,1,1,6,1,1,0,0],
+				[0,0,0,0,5,0,0,0,0]
 			]
 		],
 		map,
@@ -55,6 +117,7 @@ var game = game || {};
 		tiles = [],
 		world = [],
 		animFrame,
+		pathInterval,
 		endReached = false;
 
 
@@ -107,13 +170,6 @@ var game = game || {};
 			player.stop(x, y);
 		});
 
-		setInterval(function() {
-
-			for(var i=0;i<enemies.length;i=i+1) {
-				enemies[i].checkPath();
-			}
-		}, 1000);
-
 		loadMap();
 	};
 
@@ -124,6 +180,9 @@ var game = game || {};
 		enemies = [];
 		tiles = [];
 		world = [];
+
+		$('#undead').innerHTML = '';
+		$('#name').innerHTML = '[' + names[0] + ']';
 
 		//build world
 		for(var y=0; y<map.length; y++) {
@@ -138,6 +197,7 @@ var game = game || {};
 				} else if( map[y][x] === 6 ) {
 					var enemy = new Enemy(x*tilesize, y*tilesize);
 					enemies.push( enemy );
+					$('#undead').innerHTML += '<i></i>';
 					tiles[y][x] = new Tile(x*tilesize, y*tilesize, 1);
 					world.push( tiles[y][x] );
 				} else {
@@ -153,11 +213,23 @@ var game = game || {};
 
 		world.push( player );
 
-		if( !animFrame ) {
-			console.log('request first loop');
+		if( !animFrame ) 
 			animFrame = requestAnimationFrame( loop );
-		}
 
+
+		initPaths();
+
+	}
+
+	function initPaths() {
+
+		clearInterval(pathInterval);
+		pathInterval = setInterval(function() {
+
+			for(var i=0;i<enemies.length;i=i+1) {
+				enemies[i].checkPath();
+			}
+		}, 1000);
 	}
 
 	function toggleTraps() {
@@ -185,6 +257,7 @@ var game = game || {};
 	    	return tiles[y][x];
 	    } else {
 	    	return {
+	    		type: 0,
 	    		isWalkable: false
 	    	};
 	    }
@@ -197,6 +270,7 @@ var game = game || {};
 		if( endReached ) {
 			aa.play('exit');
 			maps.shift();
+			names.shift();
 			loadMap();
 			endReached = false;
 		}
@@ -213,10 +287,15 @@ var game = game || {};
 
 		for(var i=0;i<amount;i=i+1) {
 
-			if( !world[ i ]  ) console.log(world);
-
 			world[ i ].update( delta );
 			world[ i ].draw( ctx );
+		}
+
+		//redraw active traps
+		for(var i=0;i<amount;i=i+1) {
+
+			if( world[ i ] instanceof Tile && world[i].type === 2)
+				world[ i ].draw( ctx );
 		}
 
 		ctx.restore();

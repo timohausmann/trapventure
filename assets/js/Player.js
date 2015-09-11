@@ -80,12 +80,16 @@ Player.prototype = {
 				Math.abs(dy) < e.height/2 + h ) {
 
 				aa.play('death');
-				loadMap();
+				setTimeout(loadMap, 1000);
 			}
 		}
 
 		//exit check
 		if( getTileAt(x,y).type === 5 ) {
+
+			for(var i=0; i<enemies.length;i++) {
+				if(!enemies[i].isDead) return;
+			}
 
 			endReached = true;
 		}
@@ -120,10 +124,11 @@ Player.prototype = {
 			w = this.width/2,
 			h = this.height/2;
 
-		if( !getTileAt(x-w,y-h).isWalkable || !getTileAt(x+w,y+h).isWalkable ) {
+		//if( !getTileAt(x-w,y-h).isWalkable || !getTileAt(x+w,y+h).isWalkable ) {
+		if( getTileAt(x-w,y-h).type === 2 || getTileAt(x+w,y+h).type === 2 ) {
 			
 			aa.play('death');
-			loadMap();
+			setTimeout(loadMap, 1000);
 		}
 	}
 };

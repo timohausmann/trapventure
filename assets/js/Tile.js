@@ -93,7 +93,7 @@ Tile.prototype = {
 			if( !tiles[y-1] || !tiles[y-1][x] || tiles[y-1][x].type === 0 ) {
 
 				ctx.fillStyle = '#276059';
-				ctx.fillRect(this.x, this.y-20, tilesize, 20);
+			//	ctx.fillRect(this.x, this.y-20, tilesize, 20);
 			}
 
 		} 

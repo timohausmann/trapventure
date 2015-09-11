@@ -6,7 +6,10 @@ function Enemy( x, y ) {
 	this.vy = 0;
 	this.width = 12;
 	this.height = 30;
+
 	this.isDead = false;
+	this.rotation = 0;
+	this.rotationDelta = 0;
 
 	this.path = [];
 
@@ -22,15 +25,23 @@ Enemy.prototype = {
 
 	update : function( delta ) {
 
-		if( this.isDead ) return;
-
-		if( this.path.length ) {
+		if( this.isDead ) {
+			
+			this.vy *= 0.99;
+			this.vy += 0.5;
+			this.rotation += this.rotationDelta;
+			
+		} else if( this.path.length ) {
 
 			var dx = this.path[0].x - this.x,
 				dy = this.path[0].y - this.y;
 
+			if( dx < 4 && dx > -4 ) dx = 0;
+			if( dy < 4 && dy > -4 ) dy = 0;
+
 			//path node reached
-			if( dx === 0 && dy === 0 ) {
+			if( dx < 2 && dx > -2 && 
+				dy < 2 && dy > -2 ) {
 				this.vx = 0;
 				this.vy = 0;
 				this.path.shift();
@@ -55,6 +66,8 @@ Enemy.prototype = {
 			this.vy = 0;
 		}
 
+		
+
 		this.x += this.vx;
 		this.y += this.vy;
 
@@ -62,8 +75,6 @@ Enemy.prototype = {
 	},
 
 	draw : function( ctx ) {
-
-		if( this.isDead ) return;
 
 		var	w = this.width,
 			h = this.height,
@@ -77,12 +88,40 @@ Enemy.prototype = {
 		}
 
 		var showFrame = this.frame + (this.state*2);
+
+		if( this.isDead ) {
+
+			ctx.save();
+			ctx.translate( x+(tilesize/2), y+(tilesize/2) );
+			ctx.rotate((90 + this.rotation) * Math.PI/180);
+			ctx.drawImage( this.img, 1*12, 30, 12, 29, -w/2, -h/2, w, h);
+			ctx.restore();
+
+		} else {
+
+			//draw path
+			/*if( this.path.length ) {
+
+				ctx.beginPath();
+				ctx.moveTo(this.path[0].x + tilesize/2, this.path[0].y + tilesize/2);
+
+				for( var i=1;i< this.path.length;i++) {
+
+					ctx.lineTo(this.path[i].x + tilesize/2, this.path[i].y + tilesize/2);
+				}
+				//ctx.closePath();
+				ctx.strokeStyle = 'red';
+				ctx.stroke();
+			}*/
+
+			//draw character
+			ctx.save();
+			ctx.translate( x+(tilesize/2), y+(tilesize/2) );
+			ctx.drawImage( this.img, showFrame*12, 30, 12, 29, -w/2, -h/2, w, h);
+			ctx.restore();
+
+		}
 		
-		//draw character
-		ctx.save();
-		ctx.translate( x+(tilesize/2), y+(tilesize/2) );
-		ctx.drawImage( this.img, showFrame*12, 30, 12, 29, -w/2, -h/2, w, h);
-		ctx.restore();
 	},
 
 	checkStates: function() {
@@ -94,6 +133,8 @@ Enemy.prototype = {
 	},
 
 	checkPath: function() {
+
+		if( this.isDead ) return;
 
 		//wenn auf dem zuvor berechneten Pfad ein Hindernis ist,
 		//berechne keinen neuen Pfad (Abbruchbedingung oben)
@@ -121,8 +162,12 @@ Enemy.prototype = {
 
 		if( !getTileAt(x-w,y-h).isWalkable || !getTileAt(x+w, y+h).isWalkable ) {
 			this.isDead = true;
-
+			this.path = [];
+			this.vy = -12;//Math.random()*
+			this.rotationDelta = (-1 + Math.random()*2)*4;
 			aa.play('kill');
+
+			$('#undead i:not(.dead)').classList.add('dead');
 		}
 	}
 };

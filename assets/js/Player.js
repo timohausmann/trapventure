@@ -7,6 +7,10 @@ function Player( x, y ) {
 	this.width = 12;
 	this.height = 30;
 
+	this.isDead = false;
+	this.rotation = 0;
+	this.rotationDelta = 0;
+
 	this.lastUpdate = 0;
 	this.state = 0; //0=idle, 1=run right, 2=run up/down, 3=run left
 	this.frame = 0;
@@ -43,6 +47,18 @@ Player.prototype = {
 
 	update : function( delta ) {
 
+		if( this.isDead ) {
+			
+			this.vy *= 0.99;
+			this.vy += 0.5;
+			this.rotation += this.rotationDelta;
+
+			this.x += this.vx;
+			this.y += this.vy;
+
+			return;
+		}
+
 		var	x = this.x,
 			y = this.y,
 			w = this.width/2,
@@ -73,7 +89,7 @@ Player.prototype = {
 				dx = ex - x,
 				dy = ey - y;	
 
-			if( e.isDead ) continue; //@REMOVE?!
+			if( e.isDead ) continue;
 			
 			//x and y overlap
 			if( Math.abs(dx) < e.width/2 + w && 
@@ -84,10 +100,8 @@ Player.prototype = {
 		}
 
 		//exit check
-		if( getTileAt(x,y).type === 7 ) {
-			//endReached = true;
+		if( getTileAt(x,y).type === 7 )
 			nextMap();
-		}
 	},
 
 	draw : function( ctx ) {
@@ -108,6 +122,7 @@ Player.prototype = {
 		//draw character
 		ctx.save();
 		ctx.translate( x, y );
+		ctx.rotate(this.rotation * Math.PI/180);
 		ctx.drawImage( this.img, showFrame*12, 0, 12, 29, -w/2, -h/2, w, h);
 		ctx.restore();
 	},
@@ -127,10 +142,17 @@ Player.prototype = {
 	},
 
 	die: function() {
+
+		this.isDead = true;
+		this.state = 0;
+		this.vy = -12;
+		this.rotation = 90;
+		this.rotationDelta = (-1 + Math.random()*2)*4;
+		aa.play('die');
 		
 		setTimeout(function() {
-			aa.play('death');
+			aa.play('respawn');
 			loadMap();
-		}, 1000);
+		}, 1500);
 	}
 };

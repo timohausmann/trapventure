@@ -10,7 +10,7 @@ var game = game || {};
 		names = [
 			'dusty stairways',
 			'the trap',
-			'the forkwalk',
+			'the fork walk',
 			'the large hall',
 			'outer circle',
 			'no snakes here',
@@ -132,7 +132,13 @@ var game = game || {};
 		  ]
 		);
 
-		aa.add('death', 2,
+		aa.add('die', 2, 
+			[
+				[0,,0.3644,0.2851,0.4672,0.5159,,,-0.0944,0.4041,0.6285,-0.8575,0.8297,,0.3028,-0.0975,-0.0359,-0.012,0.93,0.1857,,0.1225,,0.56]
+			]
+		);
+
+		aa.add('respawn', 2,
 		  [
 		    [0,0.3391,0.01,0.5415,0.5428,0.2102,,,-0.095,,0.3503,0.5185,,-0.1944,-0.8553,0.5259,0.2493,0.2691,0.8178,0.0824,0.7013,0.1288,-0.0006,0.5]
 		  ]
@@ -157,6 +163,8 @@ var game = game || {};
 
 		document.addEventListener('keydown', function(e) {
 
+			if( player.isDead ) return;
+
 			var x = player.vx,
 				y = player.vy;
 
@@ -170,6 +178,8 @@ var game = game || {};
 		});
 
 		document.addEventListener('keyup', function(e) {
+
+			if( player.isDead ) return;
 
 			var x = y = false;
 			if( e.which === 65 || e.which === 68) x = true;

@@ -163,7 +163,7 @@ Enemy.prototype = {
 		if( !getTileAt(x-w,y-h).isWalkable || !getTileAt(x+w, y+h).isWalkable ) {
 			this.isDead = true;
 			this.path = [];
-			this.vy = -12;//Math.random()*
+			this.vy = -12;
 			this.rotationDelta = (-1 + Math.random()*2)*4;
 			aa.play('kill');
 

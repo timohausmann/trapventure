@@ -10,30 +10,22 @@ var game = game || {};
 		names = [
 			'dusty stairways',
 			'the trap',
-			'the fork walk',
+			'the second dimension',
 			'the large hall',
-			'outer circle',
 			'no snakes here',
+			'outer circle',
 			'the persian room',
 			'the only way',
 			'shattered pillars',
 			'test of will'
 		],
 		maps = [
-			
 			[
 				[4,1,1,2,1,1,3,1,1,7]
 			],
 			[
 				[4,1,1,1,2,2,1,6,1,5]
 			],
-			/*[
-				[0,0,0,1,1,6,1,1,0,0,0],
-				[0,0,0,3,0,0,0,2,0,0,0],
-				[0,0,0,6,0,0,0,6,0,0,0],
-				[0,0,0,1,0,0,0,1,0,0,0],
-				[4,1,1,2,2,3,2,2,1,1,5]
-			],*/
 			[
 				[6,1,1,1,1,1,1,6,5],
 				[0,0,0,0,1,0,0,0,0],
@@ -48,37 +40,21 @@ var game = game || {};
 				[0,0,1,1,1,1,1,0,0]
 			],
 			[
-				[4,1,0,3,3,3,3,3],
-				[0,2,0,3,2,6,2,3],
-				[6,1,0,3,2,2,2,3],
-				[3,0,0,3,2,5,2,3],
-				[1,2,6,3,2,2,2,3],
-				[0,0,0,3,3,3,3,3]
+				[6,0,1,6,1,0,1,6,1,0],
+				[1,0,1,0,1,0,1,0,1,0],
+				[1,0,2,0,2,0,3,0,1,5],
+				[1,0,1,0,1,0,1,0,0,0],
+				[1,4,1,0,1,6,1,0,0,0]
 			],
-			/*[
-				[1,1,1,1,3,3,6,6,1,1],
-				[1,1,1,1,2,2,1,6,1,1],
-				[1,1,1,1,2,3,1,6,1,1],
-				[4,1,1,1,3,3,1,1,1,5],
-				[1,1,1,1,2,3,1,6,1,1],
-				[1,1,1,1,2,2,1,6,1,1],
-				[1,1,1,1,3,3,6,6,1,1]
-			],*/
-			/*[
-				[0,0,0,6,0,0,0,0,0,0,0,0,0],
-				[0,0,0,2,1,1,1,3,6,6,0,0,0],
-				[0,0,0,1,0,0,0,1,0,0,0,0,0],
-				[0,0,0,1,0,6,2,1,1,2,1,6,5],
-				[0,0,0,3,0,0,0,0,0,0,0,0,0],
-				[0,0,0,3,0,0,0,0,0,0,0,0,0],
-				[6,1,4,1,2,2,2,6,6,6,0,0,0]
-			],*/
 			[
-				[6,1,0,1,6,1,0,1,6,1,0],
-				[0,1,0,1,0,1,0,1,0,1,0],
-				[0,1,0,2,0,2,0,3,0,1,5],
-				[0,1,0,1,0,1,0,1,0,0,0],
-				[0,1,4,1,0,1,6,1,0,0,0]
+				[3,3,0,6,0,3,3],
+				[3,1,2,1,2,1,3],
+				[6,0,2,3,2,0,6],
+				[2,2,0,5,0,2,2],
+				[1,2,0,0,0,2,1],
+				[3,2,2,1,2,2,3],
+				[3,3,3,3,3,3,3],
+				[0,0,0,4,0,0,0]
 			],
 			[
 				[0,1,3,1,2,6,2,1,3,6,0],
@@ -94,6 +70,16 @@ var game = game || {};
 				[0,0,0,0,6,0,0,0],
 				[0,0,0,0,2,0,0,0],
 				[0,0,0,0,1,1,1,5]
+			],
+			[
+				[4,1,1,1,1,6],
+				[0,0,3,0,0,0],
+				[0,0,1,0,0,0],
+				[0,0,1,0,0,0],
+				[0,0,1,0,0,0],
+				[0,0,6,0,0,0],
+				[0,0,2,0,0,0],
+				[0,0,1,1,1,5]
 			],
 			[
 				[0,0,0,0,4,0,0,0,0],
@@ -121,6 +107,7 @@ var game = game || {};
 		exit,
 		animFrame,
 		pathInterval,
+		lastToggle = new Date(),
 		endReached = false;
 
 
@@ -163,27 +150,26 @@ var game = game || {};
 
 		document.addEventListener('keydown', function(e) {
 
-			if( player.isDead ) return;
-
 			var x = player.vx,
-				y = player.vy;
+				y = player.vy,
+				k = e.which;
 
-			if( e.which === 65 ) x = -1; //a
-			if( e.which === 68 ) x = 1; //d
-			if( e.which === 87 ) y = -1; //w
-			if( e.which === 83 ) y = 1; //s
-			if( e.which === 32 ) toggleTraps();
+			if( k === 65 || k === 37 ) x = -1; //left
+			if( k === 68 || k === 39 ) x = 1; //right
+			if( k === 87 || k === 38 ) y = -1; //up
+			if( k === 83 || k === 40 ) y = 1; //down
+			if( k === 32 ) toggleTraps();
 
 			player.move(x, y);
 		});
 
 		document.addEventListener('keyup', function(e) {
 
-			if( player.isDead ) return;
+			var x = y = false,
+				k = e.which;
 
-			var x = y = false;
-			if( e.which === 65 || e.which === 68) x = true;
-			if( e.which === 87 || e.which === 83) y = true;
+			if( e.which === 65 || e.which === 68 || k === 37 || k === 39) x = true;
+			if( e.which === 87 || e.which === 83 || k === 38 || k === 40) y = true;
 
 			player.stop(x, y);
 		});
@@ -264,6 +250,12 @@ var game = game || {};
 	}
 
 	function toggleTraps() {
+
+		var thisToggle = new Date(),
+			delta = (thisToggle - lastToggle);
+
+		if( delta < 300 ) return;
+		lastToggle = thisToggle;
 
 		for(var i=0;i<world.length;i=i+1) {
 			if( world[i] instanceof Tile ) world[i].toggle();

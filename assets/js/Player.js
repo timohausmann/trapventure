@@ -23,6 +23,8 @@ Player.prototype = {
 
 	move: function(x, y) {
 
+		if( this.isDead ) return;
+
 		this.vx = x;
 		this.vy = y;
 
@@ -30,6 +32,8 @@ Player.prototype = {
 	},
 
 	stop: function(x, y) {
+
+		if( this.isDead ) return;
 
 		if( x ) this.vx = 0;
 		if( y ) this.vy = 0;
@@ -92,8 +96,8 @@ Player.prototype = {
 			if( e.isDead ) continue;
 			
 			//x and y overlap
-			if( Math.abs(dx) < e.width/2 + w && 
-				Math.abs(dy) < e.height/2 + h ) {
+			if( Math.abs(dx) < e.width/2 + (w-4) && 
+				Math.abs(dy) < e.height/2 + (h-4) ) {
 
 				this.die();
 			}

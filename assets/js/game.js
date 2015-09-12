@@ -9,27 +9,23 @@ var game = game || {};
 		tilesize = 40,
 		names = [
 			'dusty stairways',
-			'how to kill an undead',
-			'mirror cave',
+			'the trap',
+			'the forkwalk',
 			'the large hall',
 			'outer circle',
-			'thank god there are no snakes here',
-			'persian room',
+			'no snakes here',
+			'the persian room',
 			'the only way',
-			'broken pillars',
-			'test of will',
+			'shattered pillars',
+			'test of will'
 		],
 		maps = [
+			
 			[
-				[4,1,1,2,1,1,3,1,1,5]
+				[4,1,1,2,1,1,3,1,1,7]
 			],
 			[
 				[4,1,1,1,2,2,1,6,1,5]
-			],
-			[
-				[0,6,3,1,1,1,1,1,3,6,0],
-				[0,0,0,1,0,0,0,1,0,0,0],
-				[4,1,2,1,0,0,0,1,1,1,5]
 			],
 			/*[
 				[0,0,0,1,1,6,1,1,0,0,0],
@@ -38,6 +34,12 @@ var game = game || {};
 				[0,0,0,1,0,0,0,1,0,0,0],
 				[4,1,1,2,2,3,2,2,1,1,5]
 			],*/
+			[
+				[6,1,1,1,1,1,1,6,5],
+				[0,0,0,0,1,0,0,0,0],
+				[0,0,0,0,2,0,0,0,0],
+				[4,1,1,1,1,0,0,0,0]
+			],
 			[
 				[0,0,1,1,1,1,6,0,0],
 				[0,0,1,1,1,1,1,0,0],
@@ -72,11 +74,11 @@ var game = game || {};
 				[6,1,4,1,2,2,2,6,6,6,0,0,0]
 			],*/
 			[
-				[6,0,1,6,1,0,1,6,1,0],
-				[1,0,1,0,1,0,1,0,1,0],
-				[1,0,2,0,2,0,3,0,1,5],
-				[1,0,1,0,1,0,1,0,0,0],
-				[1,4,1,0,1,6,1,0,0,0]
+				[6,1,0,1,6,1,0,1,6,1,0],
+				[0,1,0,1,0,1,0,1,0,1,0],
+				[0,1,0,2,0,2,0,3,0,1,5],
+				[0,1,0,1,0,1,0,1,0,0,0],
+				[0,1,4,1,0,1,6,1,0,0,0]
 			],
 			[
 				[0,1,3,1,2,6,2,1,3,6,0],
@@ -116,6 +118,7 @@ var game = game || {};
 		enemies = [],
 		tiles = [],
 		world = [],
+		exit,
 		animFrame,
 		pathInterval,
 		endReached = false;
@@ -125,7 +128,7 @@ var game = game || {};
 
 		aa.add('traps', 10,
 		  [
-		    [1,0.0592,0.0217,0.0742,0.49,0.8641,,-0.56,0.0873,0.0726,0.5921,-0.1226,0.4539,0.0532,0.6772,0.3002,0.6834,-0.7991,0.836,-0.0011,0.9134,0.1809,0.3207,0.56]
+		    [1,0.0592,0.0217,0.0742,0.39,0.8641,,-0.56,0.0873,0.0726,0.5921,-0.1226,0.4539,0.0532,0.6772,0.3002,0.6834,-0.7991,0.836,-0.0011,0.9134,0.1809,0.3207,0.56]
 		  ]
 		);
 
@@ -137,11 +140,16 @@ var game = game || {};
 
 		aa.add('kill', 10,
 		  [
-		    [1,,0.0835,,0.38,0.3928,,-0.26,,,,,,,,,,,1,,,0.0116,,0.5]
+		    [2,0.0708,0.1102,0.4156,0.8265,0.5,,-0.2134,-0.3753,-0.0018,,-0.2358,-0.6747,0.662,-0.2579,,,0.1023,0.9993,0.0498,0.329,0.2427,0.0014,0.56]
 		  ]
 		);
 
 		aa.add('exit', 2, 
+			[
+				[2,0.134,0.8654,0.4633,0.3,0.1216,,0.3067,-0.5325,,-0.8813,0.8807,,0.9535,0.3137,0.24,0.2148,0.0101,0.8141,0.0372,0.7263,,-0.2908,0.56]
+			]
+		);
+		aa.add('unlock', 2, 
 			[
 			  [0,,0.0891,0.5663,0.3068,0.8345,,,,,,0.5995,0.5384,,,,,,1,,,,,0.56]
 			]
@@ -181,7 +189,6 @@ var game = game || {};
 		tiles = [];
 		world = [];
 
-		$('#undead').innerHTML = '';
 		$('#name').innerHTML = '[' + names[0] + ']';
 
 		//build world
@@ -197,12 +204,13 @@ var game = game || {};
 				} else if( map[y][x] === 6 ) {
 					var enemy = new Enemy(x*tilesize, y*tilesize);
 					enemies.push( enemy );
-					$('#undead').innerHTML += '<i></i>';
 					tiles[y][x] = new Tile(x*tilesize, y*tilesize, 1);
 					world.push( tiles[y][x] );
 				} else {
 					tiles[y][x] = new Tile(x*tilesize, y*tilesize, map[y][x]);
 					world.push( tiles[y][x] );
+
+					if(map[y][x] === 5) exit = tiles[y][x];
 				}
 			}
 		}
@@ -219,6 +227,19 @@ var game = game || {};
 
 		initPaths();
 
+	}
+
+	function nextMap() {
+		endReached = true;
+		aa.play('exit');
+		$('#black').classList.remove('hidden');
+		setTimeout(function() {
+			maps.shift();
+			names.shift();
+			loadMap();
+			endReached = false;
+			$('#black').classList.add('hidden');
+		}, 600);
 	}
 
 	function initPaths() {
@@ -266,41 +287,35 @@ var game = game || {};
 
 	function loop() {
 
-		//ugly fix
-		if( endReached ) {
-			aa.play('exit');
-			maps.shift();
-			names.shift();
-			loadMap();
-			endReached = false;
-		}
+		if( !endReached ) {
 
-		var thisUpdate = new Date(),
-			delta = (thisUpdate - lastUpdate) / 1000,
-			amount = world.length;
+			var thisUpdate = new Date(),
+				delta = (thisUpdate - lastUpdate) / 1000,
+				amount = world.length;
 
-		ctx.clearRect(0,0,canvas.width, canvas.height);
-        var offx = map[0].length*tilesize/2,
-        	offy = map.length*tilesize/2;
-        ctx.save();
-        ctx.translate(320-offx,240-offy);
+			ctx.clearRect(0,0,canvas.width, canvas.height);
+	        var offx = map[0].length*tilesize/2,
+	        	offy = map.length*tilesize/2;
+	        ctx.save();
+	        ctx.translate(320-offx,240-offy);
 
-		for(var i=0;i<amount;i=i+1) {
+			for(var i=0;i<amount;i=i+1) {
 
-			world[ i ].update( delta );
-			world[ i ].draw( ctx );
-		}
-
-		//redraw active traps
-		for(var i=0;i<amount;i=i+1) {
-
-			if( world[ i ] instanceof Tile && world[i].type === 2)
+				world[ i ].update( delta );
 				world[ i ].draw( ctx );
+			}
+
+			//redraw active traps
+			for(var i=0;i<amount;i=i+1) {
+
+				if( world[ i ] instanceof Tile && world[i].type === 2)
+					world[ i ].draw( ctx );
+			}
+
+			ctx.restore();
+
+			lastUpdate = thisUpdate;
 		}
-
-		ctx.restore();
-
-		lastUpdate = thisUpdate;
 
 		animFrame = requestAnimationFrame( loop );
 	}

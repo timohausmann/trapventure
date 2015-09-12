@@ -79,19 +79,14 @@ Player.prototype = {
 			if( Math.abs(dx) < e.width/2 + w && 
 				Math.abs(dy) < e.height/2 + h ) {
 
-				aa.play('death');
-				setTimeout(loadMap, 1000);
+				this.die();
 			}
 		}
 
 		//exit check
-		if( getTileAt(x,y).type === 5 ) {
-
-			for(var i=0; i<enemies.length;i++) {
-				if(!enemies[i].isDead) return;
-			}
-
-			endReached = true;
+		if( getTileAt(x,y).type === 7 ) {
+			//endReached = true;
+			nextMap();
 		}
 	},
 
@@ -127,8 +122,15 @@ Player.prototype = {
 		//if( !getTileAt(x-w,y-h).isWalkable || !getTileAt(x+w,y+h).isWalkable ) {
 		if( getTileAt(x-w,y-h).type === 2 || getTileAt(x+w,y+h).type === 2 ) {
 			
-			aa.play('death');
-			setTimeout(loadMap, 1000);
+			this.die();
 		}
+	},
+
+	die: function() {
+		
+		setTimeout(function() {
+			aa.play('death');
+			loadMap();
+		}, 1000);
 	}
 };

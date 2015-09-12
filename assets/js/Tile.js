@@ -17,12 +17,13 @@ Tile = function(x, y, type) {
 	2 = toggle area on
 	3 = toggle area off
 	(4 = player)
-	5 = exit
+	5 = exit (locked)
 	(6 = enemy)
+	7 = exit (open)
 	*/
 	this.type = type || 0;
 
-	if( '135'.indexOf(type) > -1 ) {
+	if( '1357'.indexOf(type) > -1 ) {
 		this.isWalkable = true;
 	}
 
@@ -85,7 +86,7 @@ Tile.prototype = {
 			y = this.y/tilesize,
 			step = (this.animStep/0.2)*20;
 
-		if( '1235'.indexOf(this.type) !== -1 ) {
+		if( '12357'.indexOf(this.type) !== -1 ) {
 
 			ctx.fillStyle = 'rgba(0,0,0,1)';
 			ctx.fillRect(this.x, this.y, tilesize, tilesize);
@@ -115,6 +116,13 @@ Tile.prototype = {
 			ctx.fillRect(this.x, this.y+40-(20-step), tilesize, (20-step));
 
 		} else if( this.type === 5 ) {
+
+			ctx.drawImage( this.img, 30, 60, 30, 30, this.x+5, this.y+5, 30, 30);
+
+			ctx.strokeStyle = '#407876';
+			ctx.strokeRect(this.x+4, this.y+4, tilesize-8, tilesize-8);	
+
+		} else if( this.type === 7 ) {
 
 			ctx.drawImage( this.img, 0, 60, 30, 30, this.x+5, this.y+5, 30, 30);
 

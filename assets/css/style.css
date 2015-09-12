@@ -44,12 +44,14 @@ body {
 	width: 640px;
 	height: 480px;
 
-	-webkit-transition: opacity 0.3s, visibility 0 0.3s;
-	transition: opacity 0.3s, visibility 0 0.3s;
+	-webkit-transition: opacity 0.5s;
+	transition: opacity 0.5s;
 }
 .screen.hidden {
 	opacity: 0;
-	visibility: hidden;
+}
+.black {
+	background: black;
 }
 .title {
 	cursor: pointer;
@@ -99,6 +101,7 @@ body {
 }
 
 .hud-undead {
+	display: none;
 	bottom: 24px;
 }
 .hud-undead i.dead {

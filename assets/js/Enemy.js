@@ -167,7 +167,13 @@ Enemy.prototype = {
 			this.rotationDelta = (-1 + Math.random()*2)*4;
 			aa.play('kill');
 
-			$('#undead i:not(.dead)').classList.add('dead');
+			for(var i=0; i<enemies.length;i++) {
+				if(!enemies[i].isDead) return;
+			}
+
+			exit.type = 7;
+			aa.play('unlock');
+
 		}
 	}
 };

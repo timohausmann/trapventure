@@ -20,10 +20,11 @@ Tile = function(x, y, type) {
 	5 = exit (locked)
 	(6 = enemy)
 	7 = exit (open)
+	8 = gem
 	*/
 	this.type = type || 0;
 
-	if( '1357'.indexOf(type) > -1 ) {
+	if( '13578'.indexOf(type) > -1 ) {
 		this.isWalkable = true;
 	}
 
@@ -86,7 +87,7 @@ Tile.prototype = {
 			y = this.y/tilesize,
 			step = (this.animStep/0.2)*20;
 
-		if( '12357'.indexOf(this.type) !== -1 ) {
+		if( '123578'.indexOf(this.type) !== -1 ) {
 
 			ctx.fillStyle = 'rgba(0,0,0,1)';
 			ctx.fillRect(this.x, this.y, tilesize, tilesize);
@@ -128,6 +129,10 @@ Tile.prototype = {
 
 			ctx.strokeStyle = '#407876';
 			ctx.strokeRect(this.x+4, this.y+4, tilesize-8, tilesize-8);	
+
+		} else if( this.type === 8 ) {
+
+			ctx.drawImage( this.img, 60, 60, 30, 30, this.x+5, this.y+5, 30, 30);
 		}
 		
 	}

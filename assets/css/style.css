@@ -23,19 +23,19 @@ body {
 	margin-bottom: 20px;
 	background: #358278;
 }
-.instructions {
-	padding: 0 20px;
-	
-	font-size: 12px;
+#instructions {
+	padding-top: 62%;
+	font-family: Georgia;
+	font-size: 18px;
+	font-style: italic;
 	line-height: 1.6;
 	text-align: center;
-	color: #999;
-	
+	color: white;
 }
-.instructions em {
-	font-style: normal;
-	text-transform: uppercase;
-	color: #358278;
+#instructions em {
+	background: rgba(255,255,255,0.25);
+	padding: 6px;
+	margin: 0 4px;
 }
 .screen {
 	position: absolute;
@@ -50,67 +50,48 @@ body {
 .screen.hidden {
 	opacity: 0;
 }
-.black {
+#black {
 	background: black;
+	z-index: 9;
 }
-.title {
-	cursor: pointer;
-	background: 	url(../images/nader.png) 51% 35% no-repeat,
-			url(../images/razor.png) 50% 28% no-repeat,
-			#8d8673;
+#title {
 	z-index: 2;
+	height: 63px;
+	margin-top: 75px;
+	background: url(../images/title.png) center no-repeat;
 }
 
-.title h1,
-.title p {
-	position: absolute;
-	left: 0;
-	width: 100%;
-	text-align: center;
-	text-transform: uppercase;
-}
-.title h1 {
-	top: 45%;
-	font-size: 32px;
-	letter-spacing: 4px;
-	color: #a13c3d;
-}
-.title p {
-	top: 80%;
-	font-size: 18px;
-	color: white;
-	font-style: italic;
-}
-
-.hud {
-	pointer-events: none;
-}
-
-.hud > [class^="hud-"] {
+#name {
 	position: absolute;
 	width: 100%;
     text-align: center;
-}
-
-.hud-undead i {
-	display: inline-block;
-	width: 16px;
-	height: 16px;
-	background: green;
-	margin: 0 4px;
-}
-
-.hud-undead {
-	display: none;
-	bottom: 24px;
-}
-.hud-undead i.dead {
-	background: red;
-}
-
-.hud-name {
 	top: 24px;
 	font-family: monospace;
 	text-transform: uppercase;
     color: white;
+}
+
+#music {
+	display: block;
+	text-align: center;
+	line-height: 20px;
+	width: 20px;
+	background: #ccc;
+	border: 0;
+	float: right;
+}
+#music.off {
+	position: relative;
+	background: #444;
+	color: #ccc;
+}
+#music.off:after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 10px;
+	width: 1px;
+	height: 16px;
+	background: white;
+	transform: rotate(45deg);
 }

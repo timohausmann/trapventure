@@ -106,6 +106,13 @@ Player.prototype = {
 		//exit check
 		if( getTileAt(x,y).type === 7 )
 			nextMap();
+
+		//gem check
+		if( getTileAt(x,y).type === 8 ) {
+			endReached = true;
+			$('#instructions').innerHTML = 'You survived and found the treasure.<br />Thanks for playing.';
+			aa.play('win');
+		}
 	},
 
 	draw : function( ctx ) {

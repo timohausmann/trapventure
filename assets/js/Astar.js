@@ -78,8 +78,6 @@ Astar.prototype = {
 
 		var successors = currentNode.getNeighbours();
 
-		//console.log( successors );
-
 		for( var i=0,j=successors.length; i<j; i++ ) {
 
 			var currSuccessor = successors[i];

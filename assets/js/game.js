@@ -7,19 +7,28 @@ var game = game || {};
 		aa = new ArcadeAudio(),
 		player,
 		tilesize = 40,
+		instructions = [
+			'Find the treasure inside the dungeon.',
+			'Press <em>space</em> to reverse traps.'
+		],
 		names = [
+			'trapventure',
 			'dusty stairways',
 			'the trap',
-			'the second dimension',
+			'the fork way',
 			'the large hall',
 			'no snakes here',
-			'outer circle',
+			'the prison',
 			'the persian room',
 			'the only way',
 			'shattered pillars',
-			'test of will'
+			'test of will',
+			'the last chamber'
 		],
 		maps = [
+			[
+				[4,1,1,1,7]
+			],
 			[
 				[4,1,1,2,1,1,3,1,1,7]
 			],
@@ -47,14 +56,13 @@ var game = game || {};
 				[1,4,1,0,1,6,1,0,0,0]
 			],
 			[
-				[3,3,0,6,0,3,3],
-				[3,1,2,1,2,1,3],
-				[6,0,2,3,2,0,6],
-				[2,2,0,5,0,2,2],
-				[1,2,0,0,0,2,1],
-				[3,2,2,1,2,2,3],
-				[3,3,3,3,3,3,3],
-				[0,0,0,4,0,0,0]
+				[0,0,0,6,0,0,0,0,0,0,0,0,0],
+				[0,0,0,2,1,1,1,3,1,6,0,0,0],
+				[0,0,0,1,0,0,0,2,2,1,0,0,0],
+				[0,0,0,1,0,3,6,2,6,0,0,0,0],
+				[0,0,0,3,0,6,0,1,1,1,2,6,5],
+				[0,0,0,3,0,1,0,0,0,0,0,0,0],
+				[6,1,4,1,2,2,2,6,6,6,0,0,0]
 			],
 			[
 				[0,1,3,1,2,6,2,1,3,6,0],
@@ -62,14 +70,6 @@ var game = game || {};
 				[4,2,3,1,2,6,2,1,3,2,5],
 				[1,3,1,2,1,3,1,2,1,3,1],
 				[0,1,3,1,2,6,2,1,3,6,0]
-			],
-			[
-				[4,1,1,1,1,1,1,6],
-				[0,0,0,0,3,0,0,0],
-				[0,0,0,0,1,0,0,0],
-				[0,0,0,0,6,0,0,0],
-				[0,0,0,0,2,0,0,0],
-				[0,0,0,0,1,1,1,5]
 			],
 			[
 				[4,1,1,1,1,6],
@@ -98,6 +98,14 @@ var game = game || {};
 				[0,0,1,1,1,1,6,0,0],
 				[0,0,1,1,6,1,1,0,0],
 				[0,0,0,0,5,0,0,0,0]
+			],
+			[
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,6,1,1,1,1,1,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,1,0,0,1,1,1],
+				[4,1,1,1,1,1,1,1,1,2,1,1,8,1],
+				[0,0,0,0,0,0,0,0,1,0,0,1,1,1],
+				[0,0,0,6,1,1,1,1,1,0,0,0,0,0]
 			]
 		],
 		map,
@@ -106,12 +114,25 @@ var game = game || {};
 		world = [],
 		exit,
 		animFrame,
+		music,
+		isMusic = true,
 		pathInterval,
 		lastToggle = new Date(),
 		endReached = false;
 
 
 	game.init = function() {
+
+		aa.add('music', 2, [
+			[1,,0.7701,0.0022,0.9,0.47,,-0.5,0.02,0.0573,,0.2199,0.16,,0.2284,0.9413,-0.8104,0.5374,0.0495,0.1138,-0.5678,0.3631,0.9268,0.2],
+			[1,,0.7701,0.0022,0.9,0.47,,0,0.02,0.0573,,0.2199,0.16,,0.2284,0.9413,-0.8104,0.5374,0.0495,0.1138,-0.5678,0.3631,0.9268,0.2],
+			[1,,0.7701,0.0022,0.9,0.47,,0.5,0.02,0.0573,,0.2199,0.16,,0.2284,0.9413,-0.8104,0.5374,0.0495,0.1138,-0.5678,0.3631,0.9268,0.2],
+			[1,,0.7701,0.0022,0.9,0.47,,1,0.02,0.0573,,0.2199,0.16,,0.2284,0.9413,-0.8104,0.5374,0.0495,0.1138,-0.5678,0.3631,0.9268,0.2]
+		]);
+
+		aa.add('win', 2, [
+			[2,0.2401,0.5158,0.5032,0.91,0.38,,-0.02,,0.0092,0.1956,-0.125,-0.2412,,-0.0988,,0.0758,0.3728,0.5567,0.3993,0.3231,0.0068,-0.2971,0.5]
+		]);
 
 		aa.add('traps', 10,
 		  [
@@ -174,9 +195,32 @@ var game = game || {};
 			player.stop(x, y);
 		});
 
+		$('#music').addEventListener('click', function(e) {
+			isMusic = !isMusic;
+			if( isMusic ) {
+				musicLoop();
+				this.classList.remove('off');
+			} else {
+				clearInterval(music);
+				this.classList.add('off');
+			}
+		});
+
+		setTimeout(function() {
+			$('#black').classList.add('hidden');
+		}, 1000);
+		
+			aa.play('music');
+		musicLoop();
 		loadMap();
 	};
 
+
+	function musicLoop() {
+		music = setInterval(function() {
+			aa.play('music');
+		}, 3000);
+	}
 
 	function loadMap() {
 
@@ -186,6 +230,7 @@ var game = game || {};
 		world = [];
 
 		$('#name').innerHTML = '[' + names[0] + ']';
+		$('#instructions').innerHTML = instructions[0] || '';
 
 		//build world
 		for(var y=0; y<map.length; y++) {
@@ -202,7 +247,7 @@ var game = game || {};
 					enemies.push( enemy );
 					tiles[y][x] = new Tile(x*tilesize, y*tilesize, 1);
 					world.push( tiles[y][x] );
-				} else {
+				}  else {
 					tiles[y][x] = new Tile(x*tilesize, y*tilesize, map[y][x]);
 					world.push( tiles[y][x] );
 
@@ -229,9 +274,12 @@ var game = game || {};
 		endReached = true;
 		aa.play('exit');
 		$('#black').classList.remove('hidden');
+		$('#name').classList.remove('hidden');
+		$('#title').classList.add('hidden');
 		setTimeout(function() {
 			maps.shift();
 			names.shift();
+			instructions.shift();
 			loadMap();
 			endReached = false;
 			$('#black').classList.add('hidden');
@@ -296,6 +344,7 @@ var game = game || {};
 				amount = world.length;
 
 			ctx.clearRect(0,0,canvas.width, canvas.height);
+
 	        var offx = map[0].length*tilesize/2,
 	        	offy = map.length*tilesize/2;
 	        ctx.save();

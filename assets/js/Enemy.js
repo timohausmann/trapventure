@@ -151,14 +151,12 @@ Enemy.prototype = {
 
 	checkTraps: function() {
 
-		if( this.isDead ) return; //@REMOVE?!
+		if( this.isDead ) return;
 
 		var	x = this.x + (tilesize/2),
 			y = this.y + (tilesize/2),
 			w = this.width/2,
 			h = this.height/2;
-
-		//console.log( getTileAt(x,y), getTileAt(x+tilesize, y+tilesize));
 
 		if( !getTileAt(x-w,y-h).isWalkable || !getTileAt(x+w, y+h).isWalkable ) {
 			this.isDead = true;
@@ -171,7 +169,7 @@ Enemy.prototype = {
 				if(!enemies[i].isDead) return;
 			}
 
-			exit.type = 7;
+			if( exit ) exit.type = 7;
 			aa.play('unlock');
 
 		}
